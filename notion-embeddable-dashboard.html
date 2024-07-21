@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEO Dashboard</title>
+    <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; }
+        .dashboard { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .card { background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; padding: 20px; }
+        .card-header { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #333; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .kpi-value { font-size: 24px; font-weight: bold; color: #0066cc; }
+        .kpi-status { font-size: 14px; margin-top: 5px; }
+        .on-track { color: #28a745; }
+        .needs-attention { color: #dc3545; }
+        .alert { background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24; margin-bottom: 10px; padding: 10px; }
+        .alert-title { font-weight: bold; margin-bottom: 5px; }
+        h1 { color: #333; text-align: center; margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = Recharts;
+
+        const mockFinancialData = [
+            { month: 'Jan', revenue: 50000, expenses: 40000 },
+            { month: 'Feb', revenue: 55000, expenses: 42000 },
+            { month: 'Mar', revenue: 60000, expenses: 45000 },
+            { month: 'Apr', revenue: 58000, expenses: 44000 },
+            { month: 'May', revenue: 62000, expenses: 46000 },
+        ];
+
+        const mockKPIs = [
+            { name: 'Monthly Recurring Revenue', value: '$62,000', target: '$60,000', status: 'On Track' },
+            { name: 'Customer Acquisition Cost', value: '$500', target: '$450', status: 'Needs Attention' },
+            { name: 'Customer Lifetime Value', value: '$5,000', target: '$4,500', status: 'On Track' },
+        ];
+
+        const mockInsights = [
+            { type: 'Prediction', description: 'Revenue expected to grow by 15% next quarter based on current trends.' },
+            { type: 'Recommendation', description: 'Consider increasing marketing budget for Product X to capitalize on growing market demand.' },
+            { type: 'Alert', description: 'Expense in Department Y is 20% above projections. Review required.' },
+        ];
+
+        function CEODashboard() {
+            const [financialData, setFinancialData] = useState([]);
+            const [kpis, setKPIs] = useState([]);
+            const [insights, setInsights] = useState([]);
+
+            useEffect(() => {
+                // Simulating API calls - replace with actual data fetching in a real application
+                setFinancialData(mockFinancialData);
+                setKPIs(mockKPIs);
+                setInsights(mockInsights);
+            }, []);
+
+            return (
+                <div className="dashboard">
+                    <h1>CEO Dashboard</h1>
+                    
+                    <div className="grid">
+                        {kpis.map((kpi, index) => (
+                            <div key={index} className="card">
+                                <div className="card-header">{kpi.name}</div>
+                                <div className="kpi-value">{kpi.value}</div>
+                                <div className={`kpi-status ${kpi.status === 'On Track' ? 'on-track' : 'needs-attention'}`}>
+                                    {kpi.status} (Target: {kpi.target})
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="card">
+                        <div className="card-header">Revenue vs Expenses</div>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <LineChart data={financialData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="month" />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
+                                <Line type="monotone" dataKey="revenue" stroke="#8884d8" />
+                                <Line type="monotone" dataKey="expenses" stroke="#82ca9d" />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+
+                    <div className="card">
+                        <div className="card-header">AI Insights</div>
+                        {insights.map((insight, index) => (
+                            <div key={index} className="alert">
+                                <div className="alert-title">{insight.type}</div>
+                                <div>{insight.description}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<CEODashboard />, document.getElementById('root'));
+    </script>
+</body>
+</html>
